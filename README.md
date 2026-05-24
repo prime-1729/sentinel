@@ -11,10 +11,14 @@ and generates plain-language intelligence reports for operators.
 sentinel/
 ├── src/
 │   ├── connect.py      # MAVLink connection and telemetry reading
-│   ├── parser.py       # Log file analysis (coming soon)
-│   ├── anomaly.py      # Anomaly detection (coming soon)
-│   ├── report.py       # Intelligence report generation (coming soon)
-│   └── api.py          # FastAPI wrapper (coming soon)
+│   ├── telemetry.py    # Live and log-file telemetry extraction
+│   ├── anomaly.py      # Anomaly detection
+│   ├── report.py       # Intelligence report generation (Ollama)
+│   ├── monitor.py      # CLI live mission monitor
+│   ├── live_feed.py    # Background MAVLink feed for the API
+│   ├── live_state.py   # Shared live telemetry state
+│   └── api.py          # FastAPI backend for the dashboard
+├── drone-mission-dashboard/  # Next.js operator dashboard (https://v0.app/chat/drone-mission-dashboard-vcQCSDzmdrR)
 ├── data/               # Store drone log files here
 ├── tests/              # Tests
 ├── venv-sentinel/      # Python virtual environment
@@ -113,25 +117,76 @@ python3 src/anomaly.py
 python3 src/parser.py data/mission.tlog
 ```
 
-### Start the API (coming soon)
+### Start the API
 ```bash
-uvicorn src.api:app --reload
+uvicorn src.api:app --reload --host 127.0.0.1 --port 8000
 ```
+
+### Start the dashboard (Terminal 3)
+
+**Requires Node.js 20.9+** (check with `node -v`). Ubuntu’s default `v18` will show
+`EBADENGINE` warnings and `next dev` may fail — upgrade with [NodeSource](https://github.com/nodesource/distributions) or [nvm](https://github.com/nvm-sh/nvm) before continuing.
+
+```bash
+cd ~/drone-projects/sentinel/drone-mission-dashboard
+cp .env.local.example .env.local   # first time only
+```
+
+**Package manager** — use one of these (first time only, then `dev`):
+
+```bash
+# Option A: pnpm (matches pnpm-lock.yaml) — enable via Node corepack
+corepack enable
+pnpm install
+pnpm dev
+
+# Option B: npm (if you already have npm, no pnpm needed)
+npm install
+npm run dev
+```
+
+If `corepack` is not found, install Node 20 LTS from https://nodejs.org or run
+`sudo apt install npm` and use Option B.
+
+**Upgrade Node 18 → 20 on Ubuntu (one-time):**
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+node -v   # should show v20.x
+cd ~/drone-projects/sentinel/drone-mission-dashboard
+rm -rf node_modules package-lock.json
+npm install
+npm run dev
+```
+
+Open http://localhost:3000
+
+**Dashboard workflow**
+1. Upload a `.tlog` file and click **ANALYZE** — calls `POST /analyze` (telemetry, anomalies, AI report).
+2. With SITL flying, click **START LIVE** — calls `POST /monitor/start` and polls `GET /telemetry/live` every 1.5s.
+
+Set `NEXT_PUBLIC_SENTINEL_API_URL` in `drone-mission-dashboard/.env.local` if the API is not on port 8000.
 
 ---
 
 ## MAVLink Connection Details
 - SITL runs ArduPilot on your laptop
 - MAVProxy sits in the middle and splits the connection
-- SENTINEL connects to MAVProxy on UDP port 14550
-- Connection string: `udp:127.0.0.1:14550`
-SENTINEL (port 14550)
+- MAVProxy **console/map uses UDP 14550** — do not point SENTINEL at that port
+- SENTINEL listens on **UDP 14551** (`udpin:127.0.0.1:14551`)
+
+After SITL starts, in the **MAVProxy** (`STABILIZE>`) terminal run **once per session**:
+```text
+output add 127.0.0.1:14551
+```
+
+```
+SENTINEL (listens on 14551)
 ↕
-MAVProxy (proxy + ground station)
+MAVProxy (14550 = console, 14551 = SENTINEL feed)
 ↕
-ArduPilot SITL (the autopilot brain)
-↕
-Simulated Drone Hardware
+ArduPilot SITL
+```
 
 ---
 
@@ -154,6 +209,32 @@ source venv-sentinel/bin/activate
 ### SENTINEL says `waiting for heartbeat` and hangs
 SITL is not running. Go to Terminal 1 and start it first.
 SENTINEL cannot connect if the drone is not flying.
+
+### Live monitor: `[Errno 13] Permission denied` or no telemetry
+MAVProxy already owns port **14550**. In the SITL terminal run:
+```text
+output add 127.0.0.1:14551
+```
+Restart the API (`uvicorn`), click **START LIVE** again. See [MAVLINK.md](MAVLINK.md).
+
+### `Arm: Battery 1 low voltage failsafe` (but battery shows 100%)
+Capacity (%) and voltage are different checks. SITL often simulates a low pack
+voltage while still reporting 100% remaining. In the **SITL terminal** (`STABILIZE>`), run:
+
+```bash
+param set SIM_BATT_VOLTAGE 12.6
+param set BATT_LOW_VOLT 0
+param set BATT_CRT_VOLT 0
+param set ARMING_CHECK 0
+param set DISARM_DELAY 0
+mode guided
+arm throttle
+takeoff 20
+```
+
+`SIM_BATT_VOLTAGE` sets the simulated cell/pack voltage (try `16.8` for a 4S pack).
+`BATT_LOW_VOLT 0` disables the low-voltage failsafe in simulation.
+These params reset when SITL restarts — run them each session before arming.
 
 ### Takeoff fails immediately
 The drone auto-disarmed. Type commands faster, or run:
@@ -199,6 +280,8 @@ Lets multiple programs connect to one drone simultaneously.
 
 **pymavlink**: Python library that speaks MAVLink.
 SENTINEL uses this to read drone data.
+
+For a project-specific cheat sheet (commands, message types, parameters), see [MAVLINK.md](MAVLINK.md).
 
 ---
 

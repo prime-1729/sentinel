@@ -1,11 +1,12 @@
 from pymavlink import mavutil
 import time
 
-def connect_to_drone(connection_string='udp:127.0.0.1:14550'):
+def connect_to_drone(connection_string='udpin:127.0.0.1:14551'):
     """
     Connect to a drone via MAVLink.
     connection_string: where to find the drone
-    - udp:127.0.0.1:14550 for SITL via MAVProxy
+    - udupin:127.0.0.1:14551 for SITL (second MAVProxy output; see MAVLINK.md)
+    - MAVProxy console/map already uses 14550 — do not share that port
     - Later: serial port for real hardware
     """
     print(f"SENTINEL: Connecting to drone at {connection_string}")
