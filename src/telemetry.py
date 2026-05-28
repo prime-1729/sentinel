@@ -2,7 +2,7 @@ from pymavlink import mavutil
 import pandas as pd
 import time
 
-def extract_telemetry(connection, duration_seconds=30):
+def extract_telemetry(connection, duration_seconds=30, store_in_db=False, db_path="data/sentinel.db", drone_id="drone_0", mission_id=None):
     """
     Read live telemetry from a connected drone.
     Extracts the key message types SENTINEL needs.
@@ -13,6 +13,8 @@ def extract_telemetry(connection, duration_seconds=30):
     battery = []
     attitude = []
     hud = []
+    radio = []
+    gps = []
     
     start_time = time.time()
     print(f"SENTINEL: Extracting telemetry for {duration_seconds} seconds...")
@@ -55,7 +57,6 @@ def extract_telemetry(connection, duration_seconds=30):
                 'yaw_deg': math.degrees(msg.yaw)
             })
             
-        elif msg_type == 'VFR_HUD':
             hud.append({
                 'timestamp': ts,
                 'airspeed': msg.airspeed,
@@ -64,13 +65,43 @@ def extract_telemetry(connection, duration_seconds=30):
                 'climb_rate': msg.climb,
                 'throttle_pct': msg.throttle
             })
+            
+        elif msg_type == 'RADIO_STATUS':
+            radio.append({
+                'timestamp': ts,
+                'rssi': msg.rssi,
+                'remrssi': msg.remrssi,
+                'rxerrors': msg.rxerrors,
+                'fixed': msg.fixed
+            })
+            
+        elif msg_type == 'GPS_RAW_INT':
+            gps.append({
+                'timestamp': ts,
+                'eph': msg.eph,
+                'epv': msg.epv,
+                'satellites_visible': msg.satellites_visible,
+                'fix_type': msg.fix_type
+            })
     
     result = {
         'positions': pd.DataFrame(positions),
         'battery': pd.DataFrame(battery),
         'attitude': pd.DataFrame(attitude),
-        'hud': pd.DataFrame(hud)
+        'hud': pd.DataFrame(hud),
+        'radio': pd.DataFrame(radio),
+        'gps': pd.DataFrame(gps)
     }
+    
+    if store_in_db:
+        from telemetry_store import TelemetryStore
+        import uuid
+        if mission_id is None:
+            mission_id = f"mission_live_{int(time.time())}_{uuid.uuid4().hex[:6]}"
+        store = TelemetryStore(db_path)
+        store.ingest_dataframes(result, drone_id, mission_id)
+        store.complete_mission(mission_id)
+        store.close()
     
     # Print summary
     print("\nSENTINEL: Telemetry extracted:")
@@ -111,7 +142,7 @@ def print_mission_summary(telemetry):
     print("="*50)
 
 
-def extract_telemetry_from_file(filepath: str) -> dict:
+def extract_telemetry_from_file(filepath: str, store_in_db=False, db_path="data/sentinel.db", drone_id="drone_0", mission_id=None) -> dict:
     """
     Extract telemetry from a saved log file.
     Works with .tlog and .bin files from ArduPilot.
@@ -123,6 +154,8 @@ def extract_telemetry_from_file(filepath: str) -> dict:
     battery = []
     attitude = []
     hud = []
+    radio = []
+    gps = []
 
     mlog = mavutil.mavlink_connection(filepath)
 
@@ -171,13 +204,47 @@ def extract_telemetry_from_file(filepath: str) -> dict:
                 'climb_rate': msg.climb,
                 'throttle_pct': msg.throttle
             })
+            
+        elif msg_type == 'RADIO_STATUS':
+            radio.append({
+                'timestamp': ts,
+                'rssi': msg.rssi,
+                'remrssi': msg.remrssi,
+                'rxerrors': msg.rxerrors,
+                'fixed': msg.fixed
+            })
+            
+        elif msg_type == 'GPS_RAW_INT':
+            gps.append({
+                'timestamp': ts,
+                'eph': msg.eph,
+                'epv': msg.epv,
+                'satellites_visible': msg.satellites_visible,
+                'fix_type': msg.fix_type
+            })
 
-    return {
+    result = {
         'positions': pd.DataFrame(positions),
         'battery': pd.DataFrame(battery),
         'attitude': pd.DataFrame(attitude),
-        'hud': pd.DataFrame(hud)
+        'hud': pd.DataFrame(hud),
+        'radio': pd.DataFrame(radio),
+        'gps': pd.DataFrame(gps)
     }
+    
+    if store_in_db:
+        from telemetry_store import TelemetryStore
+        import uuid
+        import os
+        if mission_id is None:
+            base = os.path.splitext(os.path.basename(filepath))[0]
+            mission_id = f"mission_{base}_{int(time.time())}"
+        store = TelemetryStore(db_path)
+        store.ingest_dataframes(result, drone_id, mission_id)
+        store.complete_mission(mission_id)
+        store.close()
+        
+    return result
 
 
 if __name__ == "__main__":

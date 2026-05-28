@@ -3,7 +3,10 @@ import time
 import math
 import pandas as pd
 from datetime import datetime
-from anomaly import detect_battery_stress, detect_attitude_anomaly
+from anomaly import (
+    run_all_detectors,
+    store_anomalies
+)
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -49,6 +52,8 @@ def monitor_live(connection_string='udpin:127.0.0.1:14551', window_seconds=10):
     battery = []
     attitude = []
     hud = []
+    radio = []
+    gps = []
 
     scan_timer = time.time()
     mission_start = time.time()
@@ -97,6 +102,18 @@ def monitor_live(connection_string='udpin:127.0.0.1:14551', window_seconds=10):
                 'climb_rate': msg.climb,
                 'throttle_pct': msg.throttle
             })
+            
+        elif msg_type == "RADIO_STATUS":
+            radio.append({
+                "timestamp": ts,
+                "rssi": msg.rssi,
+            })
+
+        elif msg_type == "GPS_RAW_INT":
+            gps.append({
+                "timestamp": ts,
+                "eph": msg.eph,
+            })
 
         # Print live status every 5 seconds
         elapsed = int(time.time() - mission_start)
@@ -117,34 +134,38 @@ def monitor_live(connection_string='udpin:127.0.0.1:14551', window_seconds=10):
         # Run anomaly detection every window_seconds
         if time.time() - scan_timer >= window_seconds:
             scan_timer = time.time()
+            new_anomalies = []
 
-            if len(battery) > 1:
-                bat_df = pd.DataFrame(battery)
-                bat_anomalies = detect_battery_stress(bat_df)
-                for a in bat_anomalies:
+            # Create telemetry dictionary
+            telemetry = {}
+            if len(battery) > 1: telemetry['battery'] = pd.DataFrame(battery)
+            if len(positions) > 1: telemetry['positions'] = pd.DataFrame(positions)
+            if len(attitude) > 0: telemetry['attitude'] = pd.DataFrame(attitude)
+            if len(hud) > 0: telemetry['hud'] = pd.DataFrame(hud)
+            if len(radio) > 0: telemetry['radio'] = pd.DataFrame(radio)
+            if len(gps) > 0: telemetry['gps'] = pd.DataFrame(gps)
+
+            # We need at least the core 4 dataframes for full detection (including ML)
+            if all(k in telemetry for k in ['battery', 'positions', 'attitude', 'hud']):
+                all_anomalies = run_all_detectors(telemetry, enable_ml=True, model_path="data/ml_model.joblib")
+                
+                for a in all_anomalies:
                     event_key = f"{a.event_type}_{int(a.timestamp)}"
                     if event_key not in alerted_events:
                         alerted_events.add(event_key)
+                        new_anomalies.append(a)
                         print_alert(
                             a.severity,
                             a.event_type,
                             a.detail,
                             a.recommendation
                         )
-
-            if len(attitude) > 0:
-                att_df = pd.DataFrame(attitude)
-                att_anomalies = detect_attitude_anomaly(att_df)
-                for a in att_anomalies:
-                    event_key = f"{a.event_type}_{int(a.timestamp)}"
-                    if event_key not in alerted_events:
-                        alerted_events.add(event_key)
-                        print_alert(
-                            a.severity,
-                            a.event_type,
-                            a.detail,
-                            a.recommendation
-                        )
+                        
+            if new_anomalies:
+                try:
+                    store_anomalies(new_anomalies, drone_id="drone_monitor", mission_id="mission_monitor")
+                except Exception as e:
+                    print(f"Failed to store anomalies in database: {e}")
 
             # Keep only last 60 seconds of data in buffer
             cutoff = time.time() - 60
@@ -152,6 +173,8 @@ def monitor_live(connection_string='udpin:127.0.0.1:14551', window_seconds=10):
             battery = [b for b in battery if b['timestamp'] > cutoff]
             attitude = [a for a in attitude if a['timestamp'] > cutoff]
             hud = [h for h in hud if h['timestamp'] > cutoff]
+            radio = [r for r in radio if r['timestamp'] > cutoff]
+            gps = [g for g in gps if g['timestamp'] > cutoff]
 
 
 if __name__ == "__main__":

@@ -300,9 +300,8 @@ export default function SentinelDashboard() {
             className={`font-mono text-xs px-3 py-1 ${statusVariant}`}
           >
             <span
-              className={`w-2 h-2 rounded-full mr-2 inline-block ${
-                liveConnected ? "bg-primary pulse-glow" : "bg-muted-foreground"
-              }`}
+              className={`w-2 h-2 rounded-full mr-2 inline-block ${liveConnected ? "bg-primary pulse-glow" : "bg-muted-foreground"
+                }`}
             />
             {statusLabel}
           </Badge>
@@ -381,35 +380,35 @@ export default function SentinelDashboard() {
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center gap-3">
-          <p className="text-xs font-mono text-muted-foreground flex-1 min-w-[200px]">
-            In the SITL terminal run{" "}
-            <code className="text-primary">output add 127.0.0.1:14551</code> once per
-            session. SENTINEL listens on port 14551 (MAVProxy keeps 14550 for the
-            console). Start SITL, arm, and takeoff before START LIVE.
-          </p>
-          {!liveMonitorRequested ? (
-            <Button
-              onClick={handleStartMonitor}
-              disabled={isStartingMonitor || !backendOnline}
-              className="font-mono"
-            >
-              {isStartingMonitor ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Play className="h-4 w-4 mr-2" />
-              )}
-              START LIVE
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              onClick={handleStopMonitor}
-              className="font-mono"
-            >
-              <Square className="h-4 w-4 mr-2" />
-              STOP LIVE
-            </Button>
-          )}
+            <p className="text-xs font-mono text-muted-foreground flex-1 min-w-[200px]">
+              In the SITL terminal run{" "}
+              <code className="text-primary">output add 127.0.0.1:14551</code> once per
+              session. SENTINEL listens on port 14551 (MAVProxy keeps 14550 for the
+              console). Start SITL, arm, and takeoff before START LIVE.
+            </p>
+            {!liveMonitorRequested ? (
+              <Button
+                onClick={handleStartMonitor}
+                disabled={isStartingMonitor || !backendOnline}
+                className="font-mono"
+              >
+                {isStartingMonitor ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                START LIVE
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={handleStopMonitor}
+                className="font-mono"
+              >
+                <Square className="h-4 w-4 mr-2" />
+                STOP LIVE
+              </Button>
+            )}
           </div>
           {liveMonitorRequested && !liveConnected && (
             <p className="text-xs font-mono text-yellow-400/90">
@@ -579,7 +578,7 @@ export default function SentinelDashboard() {
                                   ...mapPath.map((p) => p.relative_alt),
                                   1,
                                 )) *
-                                180
+                              180
                             return `${x},${y}`
                           })
                           .join(" ")}
@@ -590,9 +589,8 @@ export default function SentinelDashboard() {
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="relative">
                       <div
-                        className={`w-4 h-4 rounded-full ${
-                          liveConnected ? "bg-primary pulse-glow" : "bg-primary/40"
-                        }`}
+                        className={`w-4 h-4 rounded-full ${liveConnected ? "bg-primary pulse-glow" : "bg-primary/40"
+                          }`}
                       />
                       <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-primary whitespace-nowrap">
                         {liveConnected ? "LIVE ASSET" : "LOG REPLAY"}
@@ -629,9 +627,8 @@ export default function SentinelDashboard() {
           <CardTitle className="text-sm font-mono text-muted-foreground flex items-center gap-2">
             <Radio className="h-4 w-4 text-primary" />
             <span
-              className={`w-2 h-2 rounded-full ${
-                liveConnected ? "bg-primary pulse-glow" : "bg-muted-foreground"
-              }`}
+              className={`w-2 h-2 rounded-full ${liveConnected ? "bg-primary pulse-glow" : "bg-muted-foreground"
+                }`}
             />
             LIVE TELEMETRY
           </CardTitle>

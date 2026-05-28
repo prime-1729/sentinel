@@ -14,6 +14,9 @@ from anomaly import (
     detect_attitude_anomaly,
     detect_battery_stress,
     detect_idle_drift,
+    detect_signal_degraded,
+    detect_gps_glitch,
+    store_anomalies
 )
 import live_state
 
@@ -42,6 +45,8 @@ def _monitor_loop(connection_string: str, window_seconds: int) -> None:
     battery: list[dict] = []
     attitude: list[dict] = []
     hud: list[dict] = []
+    radio: list[dict] = []
+    gps: list[dict] = []
     mission_start = time.time()
     scan_timer = time.time()
     anomaly_counter = 0
@@ -118,8 +123,21 @@ def _monitor_loop(connection_string: str, window_seconds: int) -> None:
             )
             live_state.update_telemetry(speed=msg.groundspeed)
 
+        elif msg_type == "RADIO_STATUS":
+            radio.append({
+                "timestamp": ts,
+                "rssi": msg.rssi,
+            })
+
+        elif msg_type == "GPS_RAW_INT":
+            gps.append({
+                "timestamp": ts,
+                "eph": msg.eph,
+            })
+
         if time.time() - scan_timer >= window_seconds:
             scan_timer = time.time()
+            new_anomalies = []
 
             if len(battery) > 1:
                 for event in detect_battery_stress(pd.DataFrame(battery)):
@@ -128,6 +146,7 @@ def _monitor_loop(connection_string: str, window_seconds: int) -> None:
                         _alerted_keys.add(key)
                         anomaly_counter += 1
                         live_state.add_anomaly(_anomaly_to_dict(event, anomaly_counter))
+                        new_anomalies.append(event)
 
             if len(attitude) > 0:
                 for event in detect_attitude_anomaly(pd.DataFrame(attitude)):
@@ -136,6 +155,7 @@ def _monitor_loop(connection_string: str, window_seconds: int) -> None:
                         _alerted_keys.add(key)
                         anomaly_counter += 1
                         live_state.add_anomaly(_anomaly_to_dict(event, anomaly_counter))
+                        new_anomalies.append(event)
 
             if len(hud) > 5 and len(positions) > 0:
                 for event in detect_idle_drift(
@@ -146,12 +166,39 @@ def _monitor_loop(connection_string: str, window_seconds: int) -> None:
                         _alerted_keys.add(key)
                         anomaly_counter += 1
                         live_state.add_anomaly(_anomaly_to_dict(event, anomaly_counter))
+                        new_anomalies.append(event)
+                        
+            if len(radio) > 0:
+                for event in detect_signal_degraded(pd.DataFrame(radio)):
+                    key = f"{event.event_type}_{int(event.timestamp)}"
+                    if key not in _alerted_keys:
+                        _alerted_keys.add(key)
+                        anomaly_counter += 1
+                        live_state.add_anomaly(_anomaly_to_dict(event, anomaly_counter))
+                        new_anomalies.append(event)
+                        
+            if len(gps) > 0:
+                for event in detect_gps_glitch(pd.DataFrame(gps)):
+                    key = f"{event.event_type}_{int(event.timestamp)}"
+                    if key not in _alerted_keys:
+                        _alerted_keys.add(key)
+                        anomaly_counter += 1
+                        live_state.add_anomaly(_anomaly_to_dict(event, anomaly_counter))
+                        new_anomalies.append(event)
+                        
+            if new_anomalies:
+                try:
+                    store_anomalies(new_anomalies, drone_id="drone_live", mission_id="mission_live")
+                except Exception as e:
+                    print(f"Failed to store anomalies in database: {e}")
 
             cutoff = time.time() - 60
             positions = [p for p in positions if p["timestamp"] > cutoff]
             battery = [b for b in battery if b["timestamp"] > cutoff]
             attitude = [a for a in attitude if a["timestamp"] > cutoff]
             hud = [h for h in hud if h["timestamp"] > cutoff]
+            radio = [r for r in radio if r["timestamp"] > cutoff]
+            gps = [g for g in gps if g["timestamp"] > cutoff]
 
     live_state.set_connected(False)
 
