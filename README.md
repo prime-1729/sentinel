@@ -58,6 +58,11 @@ source venv-sentinel/bin/activate
 pip install pymavlink pandas anthropic fastapi uvicorn python-multipart
 ```
 
+### 4. Ensure ArduPilot commands work in all terminals (one time only)
+```bash
+echo "source ~/.profile" >> ~/.bashrc
+```
+
 ---
 
 ## Every Day: Starting Everything
@@ -65,61 +70,111 @@ pip install pymavlink pandas anthropic fastapi uvicorn python-multipart
 ### Step 1: Start SITL (Terminal 1)
 Open a terminal and run:
 ```bash
-cd ~/drone-projects/ardupilot
-. ~/.profile
-cd ArduCopter
+cd ~/drone-projects/ardupilot/ArduCopter
 sim_vehicle.py -v ArduCopter --console --map
 ```
 
-Wait until you see `STABILIZE>` prompt.
-This terminal must stay open while you work.
+Wait until you see `STABILIZE>` in the MAVProxy terminal.
+This terminal must stay open the entire session.
 
-### Step 2: Fly a test mission (in the SITL terminal)
-Type these commands into the STABILIZE> prompt:
+### Step 2: Route telemetry to SENTINEL (in the SITL terminal)
+
+SITL's MAVProxy owns port **14550**. Run this **once per session** to forward
+a copy of all MAVLink traffic to SENTINEL on port **14551**:
+
+```text
+output add 127.0.0.1:14551
+```
+
+### Step 3: Pre-flight — fix SITL defaults (in the SITL terminal)
+
+SITL often starts with a low simulated battery voltage that blocks arming.
+Run this block **every new SITL session**:
+
+```text
+param set SIM_BATT_VOLTAGE 12.6
+param set BATT_LOW_VOLT 0
+param set BATT_CRT_VOLT 0
+param set ARMING_CHECK 0      # if not found, use: param set ARMING_CHECK_ENABLED 0
+param set DISARM_DELAY 0
+```
+
+| Param | What it does |
+|-------|--------------|
+| `SIM_BATT_VOLTAGE 12.6` | Sets simulated pack voltage to full 3S LiPo. Prevents "low voltage failsafe" on arm. |
+| `BATT_LOW_VOLT 0` | Disables the low-voltage arming threshold (`0` = off). |
+| `BATT_CRT_VOLT 0` | Disables the critical-voltage threshold. |
+| `ARMING_CHECK 0` | Skips all pre-arm checks (GPS lock, compass cal, etc.). If not found, use `ARMING_CHECK_ENABLED 0` instead. |
+| `DISARM_DELAY 0` | Prevents auto-disarm while you're still typing `takeoff`. |
+
+### Step 4: Arm and fly (in the SITL terminal)
+
+```text
 mode guided
 arm throttle
 takeoff 20
+```
 
-Wait for `height 20` to appear. Drone is now flying.
-Leave it flying while you run SENTINEL.
+Wait until the console shows `height ~20 m`. The drone is now airborne and
+holding position. Leave it flying while you run SENTINEL.
 
-### Step 3: Activate SENTINEL environment (Terminal 2)
-Open a second terminal and run:
+> **Full command reference** — see [SITL.md](SITL.md) for navigation commands,
+> environmental simulation, failure injection, and RC stick overrides.
+
+### Step 5: Activate SENTINEL environment (Terminal 2)
+
 ```bash
 cd ~/drone-projects/sentinel
 source venv-sentinel/bin/activate
 ```
 
-You should see `(venv-sentinel)` in your prompt.
-You are ready to run SENTINEL code.
+You should see `(venv-sentinel)` in your prompt. You are ready to run SENTINEL code.
 
 ---
 
 ## Running SENTINEL
 
-### Connect to live drone
+### Test MAVLink connection to live SITL drone
 ```bash
 python3 src/connect.py
 ```
 
-### Telemetry of live drone
+### Stream live telemetry from SITL
 ```bash
 python3 src/telemetry.py
 ```
 
-### Detect anomaly in drone from telemetry data
+### Run anomaly detection on a log file
 ```bash
 python3 src/anomaly.py
 ```
 
-### Analyze a log file (coming soon)
+Detectors currently active: `BatteryStress`, `LowBattery`, `IdleDrift`,
+`RapidDescent`, `ExtremeAttitude`, `SignalDegraded`, `GPSGlitch`, `MotorImbalance`.
+
+### Train the ML anomaly detector
 ```bash
-python3 src/parser.py data/mission.tlog
+python3 scripts/train_model.py
 ```
 
-### Start the API
+Trains an Isolation Forest model on historical `.tlog` data in `data/`.
+The trained model is saved and auto-loaded by the API for hybrid detection.
+
+### Run the query engine (CLI)
+```bash
+python3 src/query_engine.py
+```
+
+### Start the API server
 ```bash
 uvicorn src.api:app --reload --host 127.0.0.1 --port 8000
+```
+
+API docs available at http://localhost:8000/docs once running.
+
+### Run the test suite
+```bash
+python3 -m pytest tests/ -v
 ```
 
 ### Start the dashboard (Terminal 3)

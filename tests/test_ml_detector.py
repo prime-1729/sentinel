@@ -13,7 +13,7 @@ import os
 import tempfile
 import numpy as np
 import pandas as pd
-from src.ml_detector import (
+from ml_detector import (
     MLAnomalyDetector,
     _merge_telemetry_streams,
     _engineer_features,

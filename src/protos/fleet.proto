@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package sentinel.fleet;
+option go_package = "sentinel-edge-agent/internal/mesh/pb";
+
+message NodeState {
+    string node_id = 1;
+    int64 last_updated = 2;
+    double lat = 3;
+    double lon = 4;
+    double alt = 5;
+    float battery_level = 6;
+    string status = 7; // e.g., "IDLE", "ENGAGED", "OFFLINE"
+    map<string, uint64> vector_clock = 8; // CRDT vector clock
+}
+
+message FleetState {
+    map<string, NodeState> nodes = 1;
+}

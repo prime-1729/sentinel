@@ -14,6 +14,10 @@ import {
   Play,
   Square,
   Loader2,
+  MessageSquare,
+  Send,
+  User,
+  Bot,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -24,6 +28,7 @@ import {
   startLiveMonitor,
   stopLiveMonitor,
   checkHealth,
+  askAgent,
   API_BASE,
 } from "@/lib/api"
 import type {
@@ -63,6 +68,11 @@ export default function SentinelDashboard() {
   const [liveMonitorRequested, setLiveMonitorRequested] = useState(false)
   const [connectionError, setConnectionError] = useState<string | null>(null)
   const [clock, setClock] = useState("--:--:--")
+
+  const [currentMissionId, setCurrentMissionId] = useState<string | undefined>()
+  const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([])
+  const [chatInput, setChatInput] = useState("")
+  const [isChatLoading, setIsChatLoading] = useState(false)
 
   const liveAnomaliesRef = useRef<Anomaly[]>([])
 
@@ -130,18 +140,18 @@ export default function SentinelDashboard() {
             return [...prevPath, newPoint]
           })
         }
-      }
 
-      setAnomalies((prev) => {
-        const missionOnly = prev.filter((a) => !a.id.startsWith("LIVE-"))
-        const merged = [...liveAnomaliesRef.current, ...missionOnly]
-        const seen = new Set<string>()
-        return merged.filter((a) => {
-          if (seen.has(a.id)) return false
-          seen.add(a.id)
-          return true
+        setAnomalies((prev) => {
+          const missionOnly = prev.filter((a) => !a.id.startsWith("LIVE-"))
+          const merged = [...liveAnomaliesRef.current, ...missionOnly]
+          const seen = new Set<string>()
+          return merged.filter((a) => {
+            if (seen.has(a.id)) return false
+            seen.add(a.id)
+            return true
+          })
         })
-      })
+      }
     } catch {
       setLiveConnected(false)
     }
@@ -171,6 +181,7 @@ export default function SentinelDashboard() {
       setAnomalies(result.anomalies)
       setIntelReport(result.intelligence_report)
       setFlightPath(result.flight_path)
+      setCurrentMissionId(result.mission_id)
       setMissionLoaded(true)
 
       const lastPoint = result.flight_path[result.flight_path.length - 1]
@@ -216,6 +227,7 @@ export default function SentinelDashboard() {
     setAnomalies([])
     setFlightPath([])
     setIntelReport("")
+    setCurrentMissionId("mission_live")
 
     try {
       await startLiveMonitor()
@@ -242,6 +254,29 @@ export default function SentinelDashboard() {
       setConnectionError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not stop monitor")
+    }
+  }
+
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!chatInput.trim() || isChatLoading) return
+
+    const question = chatInput.trim()
+    setChatInput("")
+    setChatMessages((prev) => [...prev, { role: "user", content: question }])
+    setIsChatLoading(true)
+
+    try {
+      // Using a generic session ID if not passed, or we could leave it undefined
+      const response = await askAgent(question, currentMissionId, "dashboard_session")
+      setChatMessages((prev) => [...prev, { role: "assistant", content: response.answer }])
+    } catch (err) {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Error: Could not reach SENTINEL agent." },
+      ])
+    } finally {
+      setIsChatLoading(false)
     }
   }
 
@@ -619,6 +654,98 @@ export default function SentinelDashboard() {
               </CardContent>
             </Card>
           )}
+
+          {/* NLP Chat Agent */}
+          <Card className="mb-6 bg-card border-border">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-mono text-muted-foreground flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                SENTINEL AI OPERATOR
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4">
+                <div className="bg-[#0a0f0a] rounded-md p-4 min-h-[200px] max-h-[400px] overflow-y-auto border border-border/50 space-y-4">
+                  {chatMessages.length === 0 ? (
+                    <div className="text-xs font-mono text-muted-foreground text-center mt-10">
+                      Operator interface active. Ask questions about the mission.
+                    </div>
+                  ) : (
+                    chatMessages.map((msg, i) => (
+                      <div
+                        key={i}
+                        className={`flex flex-col gap-1 ${
+                          msg.role === "user" ? "items-end" : "items-start"
+                        }`}
+                      >
+                        <div
+                          className={`flex items-center gap-2 text-[10px] font-mono ${
+                            msg.role === "user" ? "text-muted-foreground" : "text-primary"
+                          }`}
+                        >
+                          {msg.role === "user" ? (
+                            <>
+                              OPERATOR <User className="h-3 w-3" />
+                            </>
+                          ) : (
+                            <>
+                              <Bot className="h-3 w-3" /> SENTINEL
+                            </>
+                          )}
+                        </div>
+                        <div
+                          className={`text-xs font-mono p-3 rounded-md max-w-[85%] whitespace-pre-wrap ${
+                            msg.role === "user"
+                              ? "bg-secondary/50 text-foreground"
+                              : "bg-primary/10 text-primary border border-primary/20"
+                          }`}
+                        >
+                          {msg.content.split(/(\*\*.*?\*\*)/g).map((part, idx) => {
+                            if (part.startsWith("**") && part.endsWith("**")) {
+                              return (
+                                <strong key={idx} className="font-bold text-foreground">
+                                  {part.slice(2, -2)}
+                                </strong>
+                              )
+                            }
+                            return <span key={idx}>{part}</span>
+                          })}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                  {isChatLoading && (
+                    <div className="flex flex-col gap-1 items-start">
+                      <div className="flex items-center gap-2 text-[10px] font-mono text-primary mb-1">
+                        <Bot className="h-3 w-3" /> SENTINEL
+                      </div>
+                      <div className="text-xs font-mono p-3 rounded-md bg-primary/10 text-primary border border-primary/20 flex items-center">
+                        <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                        Analyzing telemetry...
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <form onSubmit={handleChatSubmit} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Ask about anomalies, battery profile, flight path..."
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+                    disabled={isChatLoading || !backendOnline}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isChatLoading || !chatInput.trim() || !backendOnline}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </form>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
 

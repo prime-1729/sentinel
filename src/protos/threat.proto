@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package sentinel.threats;
+option go_package = "sentinel-edge-agent/internal/mesh/pb";
+
+message ThreatAlert {
+    string threat_id = 1;
+    string detector_node_id = 2;
+    int64 timestamp = 3;
+    string threat_type = 4; // e.g., "GPS_SPOOFING", "MOTOR_IMBALANCE"
+    float confidence = 5;
+    double lat = 6;
+    double lon = 7;
+    double alt = 8;
+}
+
+message ThreatBid {
+    string threat_id = 1;
+    string bidder_node_id = 2;
+    int64 timestamp = 3;
+    float bid_score = 4; // Risk-aware, energy-aware score
+    string proposed_action = 5; // e.g., "INTERCEPT", "PATROL"
+}
+
+message ThreatConfirm {
+    string threat_id = 1;
+    string confirmed_by_node_id = 2;
+    int64 timestamp = 3;
+    bool is_authorized = 4; // HitL confirmation
+}

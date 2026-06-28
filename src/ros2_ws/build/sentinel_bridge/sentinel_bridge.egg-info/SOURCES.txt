@@ -1,0 +1,13 @@
+package.xml
+setup.py
+../../build/sentinel_bridge/sentinel_bridge.egg-info/PKG-INFO
+../../build/sentinel_bridge/sentinel_bridge.egg-info/SOURCES.txt
+../../build/sentinel_bridge/sentinel_bridge.egg-info/dependency_links.txt
+../../build/sentinel_bridge/sentinel_bridge.egg-info/entry_points.txt
+../../build/sentinel_bridge/sentinel_bridge.egg-info/requires.txt
+../../build/sentinel_bridge/sentinel_bridge.egg-info/top_level.txt
+../../build/sentinel_bridge/sentinel_bridge.egg-info/zip-safe
+launch/mavros_bridge.launch.py
+resource/sentinel_bridge
+sentinel_bridge/__init__.py
+sentinel_bridge/bridge_node.py

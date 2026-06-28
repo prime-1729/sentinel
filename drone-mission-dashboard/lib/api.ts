@@ -49,4 +49,22 @@ export async function checkHealth(): Promise<{
   return request("/health")
 }
 
+export async function askAgent(
+  question: string,
+  missionId?: string,
+  sessionId?: string,
+): Promise<import("./types").AskResponse> {
+  return request("/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      question,
+      mission_id: missionId,
+      session_id: sessionId,
+    }),
+  })
+}
+
 export { API_BASE }

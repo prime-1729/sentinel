@@ -1,0 +1,39 @@
+[0.378s] Invoking command in '/home/karan/drone-projects/sentinel/src/ros2_ws/src/sentinel_bridge': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(venv-ardupilot) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/sentinel_bridge build --build-base /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build install --record /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/install.log --single-version-externally-managed install_data
+[0.474s] running egg_info
+[0.474s] creating ../../build/sentinel_bridge/sentinel_bridge.egg-info
+[0.480s] writing ../../build/sentinel_bridge/sentinel_bridge.egg-info/PKG-INFO
+[0.480s] writing dependency_links to ../../build/sentinel_bridge/sentinel_bridge.egg-info/dependency_links.txt
+[0.480s] writing entry points to ../../build/sentinel_bridge/sentinel_bridge.egg-info/entry_points.txt
+[0.480s] writing requirements to ../../build/sentinel_bridge/sentinel_bridge.egg-info/requires.txt
+[0.480s] writing top-level names to ../../build/sentinel_bridge/sentinel_bridge.egg-info/top_level.txt
+[0.480s] writing manifest file '../../build/sentinel_bridge/sentinel_bridge.egg-info/SOURCES.txt'
+[0.493s] reading manifest file '../../build/sentinel_bridge/sentinel_bridge.egg-info/SOURCES.txt'
+[0.493s] writing manifest file '../../build/sentinel_bridge/sentinel_bridge.egg-info/SOURCES.txt'
+[0.493s] running build
+[0.493s] running build_py
+[0.493s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build
+[0.493s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build/lib
+[0.493s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build/lib/sentinel_bridge
+[0.493s] copying sentinel_bridge/__init__.py -> /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build/lib/sentinel_bridge
+[0.493s] copying sentinel_bridge/bridge_node.py -> /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build/lib/sentinel_bridge
+[0.493s] running install
+[0.496s] running install_lib
+[0.502s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages/sentinel_bridge
+[0.502s] copying /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build/lib/sentinel_bridge/__init__.py -> /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages/sentinel_bridge
+[0.502s] copying /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build/lib/sentinel_bridge/bridge_node.py -> /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages/sentinel_bridge
+[0.503s] byte-compiling /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages/sentinel_bridge/__init__.py to __init__.cpython-312.pyc
+[0.503s] byte-compiling /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages/sentinel_bridge/bridge_node.py to bridge_node.cpython-312.pyc
+[0.503s] running install_data
+[0.503s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/ament_index
+[0.503s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/ament_index/resource_index
+[0.503s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/ament_index/resource_index/packages
+[0.503s] copying resource/sentinel_bridge -> /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/ament_index/resource_index/packages
+[0.503s] copying package.xml -> /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/sentinel_bridge
+[0.503s] creating /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/sentinel_bridge/launch
+[0.503s] copying launch/mavros_bridge.launch.py -> /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/share/sentinel_bridge/launch
+[0.503s] running install_egg_info
+[0.510s] Copying ../../build/sentinel_bridge/sentinel_bridge.egg-info to /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages/sentinel_bridge-0.0.1-py3.12.egg-info
+[0.510s] running install_scripts
+[0.556s] Installing bridge_node script to /home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/bin
+[0.556s] writing list of installed files to '/home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/install.log'
+[0.570s] Invoked command in '/home/karan/drone-projects/sentinel/src/ros2_ws/src/sentinel_bridge' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/karan/drone-projects/sentinel/src/ros2_ws/install/sentinel_bridge/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(venv-ardupilot) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/sentinel_bridge build --build-base /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/build install --record /home/karan/drone-projects/sentinel/src/ros2_ws/build/sentinel_bridge/install.log --single-version-externally-managed install_data

@@ -2,7 +2,7 @@ import pytest
 import os
 import sqlite3
 import pandas as pd
-from src.telemetry_store import TelemetryStore
+from telemetry_store import TelemetryStore
 
 def test_store_initialization():
     """

@@ -1,0 +1,300 @@
+2026/06/26 02:17:25 Connected to NATS at nats://127.0.0.1:4222
+2026/06/26 02:17:25 Go Edge Agent is running. Listening on sentinel.threats.>
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-a5677e67-2747-475d-a8a3-2f6519ec0d6c
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-54ef17b6-d173-43bb-aaf6-bd805871a5d3
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-90dc0580-275a-4f76-ac5d-c6e59819c59d
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-76a4447c-74a4-4004-8ea0-ede53360a22d
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-31b056f6-6dbb-4698-ae72-bf37840fb3b8
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-4552d8e2-659d-47ac-8fee-9e8ffc31da07
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-9c1fd276-0e4c-401e-af73-b9a1ae1c3b16
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-6cfbf736-0345-4c8b-833f-902bb7e684c0
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-93f7fe0d-5840-44c6-8c9c-9071b4e83b0b
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-01af3246-5836-49d6-81e2-128cf5bc2f80
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-5d26847e-c53e-4887-ab1b-20e01d578a52
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-47da1616-b3d1-4a45-ad20-9432aad17c0e
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-e7225f21-9506-42b4-b8d9-c4fe34b192c6
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-97b63bae-8091-4637-8869-60ef082f3456
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-2308072f-9c41-45f8-9dae-e50ae0865e40
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-5d392c5e-ef54-457a-adba-d431b1f6f084
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-0bfa464b-1d71-4cae-8b7f-f2d2183702cd
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-b741fadf-377b-4b50-a1a0-0d6721872c04
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-98a8bb3c-9ee1-4af2-99b9-8404d0045784
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-545b50df-a78c-428c-a09a-ac1e5a93e471
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-dde924ae-3884-4590-ae61-48c8c99bdbff
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-f784f4b3-cf1c-4fea-9e6f-bacfc144acf1
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-1d3a9144-b2db-4721-be6d-4666dddfda67
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-3a17c3df-450d-4912-a84a-e878077d4bac
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-99babb27-b180-4875-85cc-e5eb488a1409
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-ffb37506-1027-48e8-8f6e-82a2f72479d4
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-d2d0d950-028e-46f0-b77c-fdc12d4089ea
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-c884701b-2c29-45a2-a201-560bdc8142a0
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-6fae2806-7b8b-4ca9-85bc-25302c7f7f53
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-52306c3e-e528-46a2-809c-049cd8463fa5
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-106d43b4-3946-4d74-bc78-379ec882d751
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-8cce8d72-e73f-4275-8f53-473d60506a80
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-1858d941-a465-4ec1-afda-e2dccdbd5cd1
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-e3868b62-9833-48a8-9c70-f0bad113aa4e
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-6db157f2-b6c7-46bc-8d89-ecc7db0c8f01
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-781860bc-52d0-49bb-8873-9fe8bbf9531f
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-37a661a5-a29f-4f44-bd77-7ee0b757b625
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-24d93c16-8a7d-4a99-8636-1afa64c8b5e6
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-c24017c8-670a-4531-92ce-14295075068e
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-22b5a873-68ba-4c01-8f1f-929c493da5bf
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-6dbf6ccf-7eb1-430d-b689-cb8207a9bff5
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-abb131c2-25bf-46e3-8fde-271ee0f3d072
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-ca6eb04a-67b5-4e6b-8186-5bc37cccb546
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-b257d0f6-6e42-4e25-8807-94da082df041
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-1f154090-78dc-4db0-bf75-242c28be7e79
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-8795f562-bf80-4d84-9525-1daf3039eb22
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-5bb9a7c1-180d-4c84-a8be-2c04cd73f531
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-513dd562-87ee-4808-8df7-efe646f2c553
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-cc93af11-b437-4513-b1e3-fead39ccd107
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-b4543558-cab1-441d-a6ab-cd78fe870b70
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-53b68521-f74f-4e24-bfca-9c3143739d96
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-fff3c534-0518-4dba-8a71-f594d3c5ccd3
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-a0df0617-5b72-4e13-8861-943e733cf84a
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-a92dd82c-a8a9-4ce7-bbf7-407ed154a84c
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-520a036b-0ee2-4ac5-b276-f6a216d41652
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-6ae0fb33-4b38-4284-b7b0-2ff8cd6a6f39
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-9895a12a-e341-4607-aed9-3bc168966cb7
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-7d3a3669-dba8-4606-a37b-0d38edc0591a
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-96507340-1db7-4225-a683-0029b243758d
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-e9e69fa1-b9a9-4dce-a935-866d6a8d36b0
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-0f61e803-effe-4121-9155-ec6104a3fa38
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-91a58a1f-e1f6-4636-b630-1871a4464805
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-7966c7cf-e299-4061-926d-ade956135e2b
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-3863c92d-e6bf-448d-a300-13b5bbafa02e
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-f099c482-e39c-4f29-ad22-4078e60116ae
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-1cd55f64-90f3-4524-b81a-9e373e5e9ea2
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-2bab523b-11a9-4b4a-917e-85aeb681c5dd
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-cb52a205-e0bf-4237-8880-bf70845a7598
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-933bce8f-fa44-4762-82a5-fb7ce0c69124
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-b611be30-a420-4a3f-83f2-d126eba800ea
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-b2ac2a02-516d-444b-81a9-9381be9801bd
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-82dcf975-c08f-4daa-8a5c-bb030d98396b
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-ceb20a74-5402-48e0-bf96-e99ff2ed2a15
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-4766d539-7817-43af-80fc-fa79d2da9aa5
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-307729f7-87e8-4abf-acc2-001bf9704d26
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-73d28d89-7146-442b-a585-757cb7604681
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-f3a80fe6-1fea-4f70-9254-0f039f6d793e
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-16c45ba6-5ab5-4289-85ef-82de9cf2d2a4
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-30ccd47b-536b-448b-93c1-bdfc8d8e2bd8
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-2ae577a4-c189-4cb4-8da0-562940f2e7e6
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-74aa2c73-678c-4460-9313-c40d6dee4bb5
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-b780f92c-a80a-4ac0-ba43-fa2e8c1baca3
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-9e62e33a-4eff-452a-9844-3ec4a78c01c5
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-f62e4ff3-5998-45fc-a816-95aad582ef30
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-1e4de599-e51d-4608-a6d6-545cc94fbd35
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-daf9c92c-efe0-4ccf-b76d-2a07af2743e7
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-c8f6d90c-1da0-4781-8f65-81723afaabcc
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-de5e209f-c4d6-45b7-8d84-010f6662b577
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-3b2ea2ce-8bb7-43f3-984c-2505e54e0d47
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-c984233a-0691-4adb-b8b5-69a5261a3c3e
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-d0067721-dc02-4fc8-89d5-2c3e39780338
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-9d0495b0-4169-48a5-b40a-736c5d2e62cc
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-88c86a5f-7567-4740-a306-d414b9e86518
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-d58f9b9f-4149-42c2-aef1-76d956d9ee1a
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-80af99cf-614d-42d6-8ae6-5c61caeb3bc8
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-028aa55a-5b31-47a0-b3fe-667a338a74d3
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-3a7fa196-6d1c-4882-b1da-40adb1ef6984
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-0c562277-2428-49b8-af03-19fc4f4c7891
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.alert: [PING_TEST] Confidence: 0.99 from Node: python-test-node
+2026/06/26 02:17:25 Sent ThreatConfirm for PING_TEST: test-109144c3-c299-4806-96c5-b5b49edb83f7
+2026/06/26 02:17:25 Received ThreatAlert on sentinel.threats.confirm: [] Confidence: 0.00 from Node: go-edge-agent
+2026/06/26 02:57:47 Shutting down Edge Agent

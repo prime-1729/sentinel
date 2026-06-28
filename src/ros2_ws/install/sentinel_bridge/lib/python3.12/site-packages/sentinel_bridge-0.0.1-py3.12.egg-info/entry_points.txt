@@ -1,0 +1,2 @@
+[console_scripts]
+bridge_node = sentinel_bridge.bridge_node:main

@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from src.anomaly import detect_signal_degraded, detect_gps_glitch, detect_battery_stress, detect_altitude_anomaly, detect_attitude_anomaly
+from anomaly import detect_signal_degraded, detect_gps_glitch, detect_battery_stress, detect_altitude_anomaly, detect_attitude_anomaly, detect_motor_imbalance
 
 # ─── Signal Degradation (RSSI) ───────────────────────────────
 
@@ -149,6 +149,34 @@ def test_normal_attitude_no_alert():
     anomalies = detect_attitude_anomaly(data)
     assert len(anomalies) == 0
 
+# ─── Motor Imbalance (ESC) ───────────────────────────────────
+
+def test_motor_imbalance_fires():
+    """RPM diff > 20% should fire a HIGH event."""
+    data = pd.DataFrame([
+        {'timestamp': 100.0, 'rpm1': 8000, 'rpm2': 8100, 'rpm3': 8050, 'rpm4': 6000},  # 25% difference (8100 max, 6000 min)
+    ])
+    anomalies = detect_motor_imbalance(data)
+    assert len(anomalies) == 1
+    assert anomalies[0].severity == 'HIGH'
+    assert 'Motor imbalance detected' in anomalies[0].detail
+
+def test_motor_healthy_no_alert():
+    """RPM diff < 20% should NOT fire an event."""
+    data = pd.DataFrame([
+        {'timestamp': 100.0, 'rpm1': 8000, 'rpm2': 8100, 'rpm3': 8050, 'rpm4': 7900},  # ~2.5% difference
+    ])
+    anomalies = detect_motor_imbalance(data)
+    assert len(anomalies) == 0
+
+def test_motor_idle_no_alert():
+    """Low RPM (<1000) should be ignored (motors idle or stopped)."""
+    data = pd.DataFrame([
+        {'timestamp': 100.0, 'rpm1': 100, 'rpm2': 500, 'rpm3': 100, 'rpm4': 0},  # Diff is huge in %, but max < 1000
+    ])
+    anomalies = detect_motor_imbalance(data)
+    assert len(anomalies) == 0
+
 # ─── Edge Cases ──────────────────────────────────────────────
 
 def test_detectors_with_empty_df():
@@ -156,3 +184,4 @@ def test_detectors_with_empty_df():
     data = pd.DataFrame()
     assert len(detect_signal_degraded(data)) == 0
     assert len(detect_gps_glitch(data)) == 0
+    assert len(detect_motor_imbalance(data)) == 0

@@ -1,0 +1,12 @@
+source;share/sentinel_bridge/hook/path.ps1
+source;share/sentinel_bridge/hook/path.dsv
+source;share/sentinel_bridge/hook/path.sh
+source;share/sentinel_bridge/hook/pythonpath.ps1
+source;share/sentinel_bridge/hook/pythonpath.dsv
+source;share/sentinel_bridge/hook/pythonpath.sh
+source;share/sentinel_bridge/hook/pythonscriptspath.ps1
+source;share/sentinel_bridge/hook/pythonscriptspath.dsv
+source;share/sentinel_bridge/hook/pythonscriptspath.sh
+source;share/sentinel_bridge/hook/ament_prefix_path.ps1
+source;share/sentinel_bridge/hook/ament_prefix_path.dsv
+source;share/sentinel_bridge/hook/ament_prefix_path.sh

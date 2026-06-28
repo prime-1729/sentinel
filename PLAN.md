@@ -1,276 +1,212 @@
-# SENTINEL Development Plan
+# SENTINEL Execution Roadmap: Edge-Native Codebase Revamp
 
-Last updated: 2026-05-27
+Last updated: 2026-06-26
 
----
-
-## Project Summary
-
-SENTINEL is a mission intelligence system for autonomous drone operations, targeting iDEX DISC Challenge 21: "AI Enabled Multi Agent Module for UAS Functions."
-
-The system connects to drone fleets via MAVLink, ingests telemetry, detects anomalies, correlates events across data streams, and answers operator questions in natural language — with every analytical conclusion backed by deterministic, testable engineering. The LLM only handles natural language parsing and formatting.
+> **Source of Truth:** All phases below map directly to the 6-stage pipeline
+> (COLLECT → INTERPRET → DETECT → REASON → PLAN → ACT) and the 4 services
+> (Sentinel Edge, C2, Fusion, Dashboard) defined in
+> [`architecture/service_architecture.md`](architecture/service_architecture.md).
 
 ---
 
-## Current State (What's Built)
+## 0. Current State & Goal
 
-### Core Pipeline — Working
+We have successfully built a Python-based, single-drone prototype that proves we can parse telemetry and run NLP-powered intelligent reasoning. 
 
-| Capability | Files | Notes |
-|------------|-------|-------|
-| MAVLink connection (SITL + logs) | `connect.py`, `telemetry.py` | Stable. Live + file extraction. |
-| Anomaly detection (5 detectors) | `anomaly.py` | BatteryStress, LowBattery, IdleDrift, RapidDescent, ExtremeAttitude |
-| Intelligence report generation | `report.py` | Ollama/llama3.2. Sends full telemetry summary to LLM. |
-| CLI live mission monitor | `monitor.py` | Terminal output with rolling anomaly scans. |
-| Background live feed for dashboard | `live_feed.py`, `live_state.py` | Thread-safe, polls every 10s for anomalies. |
-| FastAPI backend | `api.py` | `/analyze`, `/telemetry/live`, `/monitor/start`, `/monitor/stop` |
-| Operator dashboard | `drone-mission-dashboard/` | Next.js. Upload .tlog or connect live. |
+**Our Goal:** Completely revamp this monolithic Python codebase into a decentralized, multi-language Edge-Native swarm intelligence platform consisting of:
 
-### Known Gaps (Identified by Review)
+| Service | Language | Runs On |
+|---|---|---|
+| **Sentinel Edge** | Go + Python sidecar | Every drone |
+| **Sentinel C2** | Python | GCS (optional) |
+| **Sentinel Fusion** | Python | GCS / Ground node |
+| **Dashboard** | TypeScript (Next.js) | Operator workstation |
 
-| Gap | Impact | Priority |
-|-----|--------|----------|
-| No `SignalDegraded` detector | Reasoning rules that check for signal events will never fire | **HIGH** — prerequisite for query engine |
-| No `GPSGlitch` detector | "environmental_or_gps" catch-all is too vague for root cause analysis | **HIGH** — prerequisite for query engine |
-| No `MotorImbalance` detector | Motor failure pattern rule is weaker without ESC data | MEDIUM — depends on FC support |
-| Telemetry in DataFrames only | Can't query by time range, drone, waypoint | **HIGH** — blocks all query functionality |
-| No structured query capability | Operator can only get full report, not targeted answers | HIGH — core feature gap |
-| No cross-stream correlation | Each detector works in isolation | HIGH — intelligence value is in correlations |
-| No conversational context | Follow-up questions like "was that related to..." fail | MEDIUM — needed for NLP layer |
-| No mission planning | No path to multi-drone coordination | Future |
-| Geographic references unresolvable | "Northern perimeter" has no coordinate mapping | Future — needed with mission planner |
+The following 7-phase execution plan details the exact engineering steps to achieve this.
 
 ---
 
-## Build Roadmap
+## Phase A: Edge Agent & Mesh Infrastructure (Go)
 
-### Phase 1: Telemetry Foundation (Weeks 1–2)
+> **Maps to:** Mesh backbone for all stages. NATS topic structure from `service_architecture.md §2`.
 
-**Goal:** Telemetry lives in SQLite. Everything is queryable.
+**Goal:** Establish the foundational NATS mesh network and the Go-based Edge Agent that will handle high-speed D2D (Drone-to-Drone) communication.
 
-#### Week 1 — SQLite Schema + ETL ✅
+- [x] **A1. Initialize Go Project:** Setup `src/edge-agent` with `go mod init sentinel-edge-agent`.
+- [x] **A2. Define Protobuf Schemas:** Create `src/protos/` containing:
+  - `ThreatAlert`, `ThreatBid`, `ThreatConfirm`, `ThreatReport` (for TAPP protocol — all 4 phases)
+  - `FleetState` (for CRDT state syncing)
+- [x] **A3. Setup NATS Mesh:** Embed or connect to a NATS server configured for leaf-node/mesh routing.
+- [x] **A4. Edge Agent Pub/Sub Wrapper:** Build the core Go client that handles epidemic broadcasting (publish) and subscription to the full NATS topic tree:
+  - `sentinel.fleet.state.{drone_id}` — CRDT sync (1Hz)
+  - `sentinel.threats.alert` — Epidemic broadcast
+  - `sentinel.threats.confirm` — Sensor cross-validation
+  - `sentinel.threats.bid` — CBBA auction
+  - `sentinel.threats.report` — Post-action reporting
+  - `sentinel.mesh.topology` — Mesh routing updates
+- [x] **A5. Integration Test:** Build a mock Python node to verify sub-millisecond NATS pub/sub latency between Python and Go.
 
-- [x] Create `telemetry_store.py` with SQLite schema
-  - Tables: positions, battery, attitude, hud, anomaly_events, missions
-  - Indexes on `(drone_id, timestamp)` for all telemetry tables
-  - Index on `event_type` for anomaly_events
-- [x] Write ETL functions: `ingest_dataframes()`, `ingest_tlog()`
-- [x] Verify: load the existing 48MB .tlog → query with raw SQL (9.09s, target <30s)
-- [x] Write basic tests for schema creation and data insertion (4 tests, all passing)
+### A-Followup: Enrich Protobuf Schemas
 
-#### Week 2 — Wire ETL Into Existing Code + New Detectors ✅
+The current `threat.proto` is simplified. It must be upgraded to match the architecture spec:
 
-- [x] Modify `telemetry.py` to optionally write into SQLite alongside DataFrame return
-- [x] Modify `anomaly.py` to store detected events in `anomaly_events` table via `store_anomalies()` helper
-- [x] Build `SignalDegraded` detector
-  - Source: `RADIO_STATUS` messages (rssi field, 0–254 SiK scale)
-  - Thresholds: RSSI < 30 → CRITICAL (~10 dB above sensitivity), RSSI 30–64 → MEDIUM
-  - Source: SiK radio documentation, formula: `signal_dBm = (RSSI / 1.9) - 127`
-  - Updated `live_feed.py` and `monitor.py` to collect `RADIO_STATUS`
-- [x] Build `GPSGlitch` detector
-  - Source: `GPS_RAW_INT` messages (eph field = HDOP × 100)
-  - Thresholds: eph > 400 (HDOP > 4.0) → CRITICAL, eph 200–400 (HDOP 2.0–4.0) → HIGH
-  - Source: ArduPilot `GPS_HDOP_GOOD` parameter (default 140), pre-arm blocks at eph > 200
-  - Updated `live_feed.py` and `monitor.py` to collect `GPS_RAW_INT`
-- [x] Add both new detectors to `run_all_detectors()`
-- [x] Test detectors with synthetic data (15 tests, all passing)
+- [ ] **A6. Enrich `threat.proto`:** Add `ThreatType` enum (`HOSTILE_UAS`, `EW_JAMMING`, `GPS_SPOOFING`, `MOTOR_FAILURE`, etc.), `Position` and `Velocity` sub-messages, `ttl` (hop count for epidemic broadcast), `SensorSource` enum, and `cbba_round` to `ThreatBid`.
+- [ ] **A7. Add `ThreatReport` message:** For TAPP Phase 4 (Execute & Report) — includes `action_taken`, `outcome`, `post_action_state`.
+- [ ] **A8. Regenerate bindings** for Go and Python after schema enrichment.
 
 ---
 
-### Phase 2: Intelligence Engine (Week 3)
+## Phase B: Sensor Ingestion (ROS2 + PyMAVLink)
 
-**Goal:** The system can answer structured questions about missions with evidence.
+> **Maps to:** Stage 1 (COLLECT) — Sensor Data Acquisition.
 
-#### Query Engine
+**Goal:** Decouple sensor ingestion from the intelligence logic. Expose all telemetry, camera, and LiDAR data to the NATS mesh via ROS2.
 
-- [ ] Create `query_engine.py`
-- [ ] Implement query handlers:
-  - `analyse_waypoint(waypoint_id, mission_id)` — deviation, correlated anomalies, battery state
-  - `query_time_window(start, end, drone_id)` — all telemetry in a time range
-  - `summarise_anomalies(mission_id, anomaly_type?)` — filtered anomaly listing
-  - `analyse_route_deviation(mission_id)` — planned vs actual with Haversine
-  - `battery_profile(mission_id)` — voltage curve, stress events, discharge rate
-  - `mission_summary(mission_id)` — full mission overview
-- [ ] Implement `_determine_cause()` as a deterministic decision tree
-  - Checks signal, battery, attitude, GPS, and environmental causes
-  - Returns ranked list of probable causes
-- [ ] Write Haversine distance utility
+- [x] **B1. ROS2 Workspace Setup:** Initialize `src/ros2_ws`.
+- [x] **B2. MAVROS Configuration:** Set up MAVROS to bridge ArduPilot/PX4 flight controller data to native ROS2 topics.
+- [x] **B3. Telemetry Refactor:** Refactor the existing Python `telemetry.py` from a SQLite-centric writer to a high-frequency NATS publisher. 
+- [x] **B4. ROS2-to-NATS Bridge:** Write the bridging service that listens to ROS2 sensor topics (e.g., VIO, LiDAR point clouds) and republishes them to the NATS mesh so the Go Edge Agent and Python sidecar can consume them.
 
-#### Reasoning Engine
+### B-Followup: Additional Sensor Adapters
 
-- [ ] Create `reasoning.py`
-- [ ] Implement named correlation rules:
-  - `signal_induced_deviation` — deviation + SignalDegraded → communication interference
-  - `battery_forced_descent` — RapidDescent + BatteryStress → power failure
-  - `motor_failure_pattern` — ExtremeAttitude + RapidDescent + high throttle → motor issue
-  - `gps_position_error` — deviation + GPSGlitch + no signal anomaly → GPS accuracy
-  - `environmental_drift` — deviation + no anomalies → wind/environment
-- [ ] Each rule: name, description, conditions (lambda), conclusion, confidence level
-- [ ] Unit test each rule with synthetic telemetry contexts
-- [ ] Verify: run canned queries against stored telemetry, validate results manually
+Per the architecture, the COLLECT stage must be a set of **pluggable adapters**:
+
+- [ ] **B5. RF Scanner Adapter:** Implement a UDP/ROS2 listener for RF scanner data (hostile drone control signals). Publish to `sentinel.telemetry.{drone_id}.rf`.
+- [ ] **B6. Camera Adapter Stub:** Create a ROS2 subscriber for EO/IR camera streams that publishes detection metadata (not raw frames) to `sentinel.telemetry.{drone_id}.camera`.
 
 ---
 
-### Phase 3: NLP Layer + Agent (Week 4)
+## Phase C: 5-Domain Intelligence (Python Sidecar)
 
-**Goal:** Operator types a question, gets a grounded answer. Follow-up questions work.
+> **Maps to:** Stage 2 (INTERPRET) + Stage 3 (DETECT) — Physics Modeling & 5-Domain Anomaly Detection.
 
-#### NLP Layer
+**Goal:** Transform the existing `anomaly.py` logic into a continuous ML and signal processing daemon that analyzes streams in real-time across **all 5 domains**.
 
-- [ ] Create `nlp.py`
-- [ ] `parse_intent(question, session_context?) → QueryIntent`
-  - LLM extracts query type + parameters from natural language
-  - Few-shot examples in the prompt for each QueryType
-  - JSON output mode for structured extraction
-  - Session context injected for follow-up question resolution
-- [ ] `format_response(result: QueryResult, session_context?) → str`
-  - LLM converts structured result to operational briefing
-  - Must reference evidence — no freeform claims
-  - Previous context shapes the narrative
+- [ ] **C1. Python Sidecar Daemon:** Stand up the Python process (`src/intelligence_sidecar.py`) that subscribes to `sentinel.telemetry.>` NATS topics with sliding-window buffering.
 
-#### Mission Session
+### Domain 1: Propulsion Health
 
-- [ ] Add `MissionSession` class to `sentinel_agent.py`
-  - `query_history: list[(QueryIntent, QueryResult)]`
-  - `established_facts: dict` — keyed by query context, not flat merge
-  - `open_questions: list`
-  - `add_result()` — stores results, updates facts for HIGH confidence
-- [ ] Session created per operator conversation
-- [ ] Context passed to both `parse_intent()` and `format_response()`
+- [ ] **C2. Vibration FFT:** Implement Fast Fourier Transform analysis on `RAW_IMU` / `VIBRATION` topics to extract frequency-domain signatures for bearing wear and prop damage.
+- [ ] **C3. Motor Current Signature Analysis (MCSA):** Upgrade `detect_motor_imbalance()` to use MCSA on `ESC_STATUS` for electrical degradation detection before mechanical failure.
 
-#### Orchestrator
+### Domain 2: Power System
 
-- [ ] Create `sentinel_agent.py`
-  - Wires: NLP parse → query engine → reasoning → NLP format
-  - Manages MissionSession lifecycle
-  - Handles error cases (missing data, unknown query type)
-- [ ] Add `/ask` endpoint to `api.py`
-  - POST body: `{"question": "...", "session_id": "...", "mission_id": "..."}`
-  - Returns: `{"answer": "...", "confidence": "...", "evidence": [...]}`
-- [ ] Rewrite `report.py` to use query engine (MISSION_SUMMARY query) instead of raw LLM dump
-- [ ] End-to-end test: operator question → grounded natural language answer
+- [ ] **C4. Electrochemical Degradation Model:** Implement Peukert's law tracking + internal impedance estimation on `BATTERY_STATUS` telemetry to detect cell degradation and internal resistance rise.
+
+### Domain 3: Navigation Integrity
+
+- [ ] **C5. GPS Spoofing Detection:** Implement EKF innovation gating and IMU-cross-validation on position streams. Detect baro/GPS altitude divergence.
+- [ ] **C6. State Estimation Monitoring:** Monitor EKF confidence (via `EKF_STATUS_REPORT` MAVLink message) for IMU drift and magnetometer jamming indicators.
+
+### Domain 4: Flight Dynamics
+
+- [ ] **C7. Commanded vs. Achieved Analysis:** Implement commanded vs. achieved attitude mapping using `SERVO_OUTPUT_RAW` vs `ATTITUDE`. Detect control instability, structural damage, and icing.
+
+### Domain 5: Electronic Warfare ⚡
+
+- [ ] **C8. RF Spectrum Baselining:** Implement baseline noise-floor estimation from the RF scanner feed. Flag deviations as potential jamming/spoofing.
+- [ ] **C9. ML Anomaly Detection on RF:** Train/deploy an anomaly detection model (Isolation Forest or Autoencoder) on RF spectral features.
+- [ ] **C10. Fleet Link-Loss Correlation:** Cross-reference local RSSI degradation with neighboring drones' CRDT states to determine if link loss is localized (hardware fault) or area-wide (active jamming).
+
+### NATS Publishing (TAPP Integration)
+
+- [ ] **C11. Publish `ThreatAlert` protobufs:** When any domain detector fires, the sidecar publishes a `ThreatAlert` protobuf (NOT a separate `AnomalyEvent` type) to `sentinel.threats.alert` on the NATS mesh. This directly triggers the TAPP protocol in the Go Edge Agent.
 
 ---
 
-### Phase 4: MotorImbalance Detector (Week 4, if time)
+## Phase D: CRDT State Sync & CBBA (Go)
 
-- [ ] Build `MotorImbalance` detector
-  - Source: `ESC_TELEMETRY_1_TO_4` messages
-  - Detect asymmetric RPM or current across motors
-  - Handle gracefully when ESC telemetry is not available (many FCs don't send it)
-- [ ] Add to `run_all_detectors()` with availability check
+> **Maps to:** Stage 4 (REASON) — Distributed Situational Awareness + Stage 5 (PLAN) — Decentralized Task Allocation.
 
----
+**Goal:** Give the swarm a distributed brain. Implement decentralized state sharing and task allocation in Go.
 
-### Phase 5: Mission Planner + Multi-Drone (Weeks 5–8)
+### REASON — Local Common Operating Picture
 
-**Goal:** System can decompose high-level mission objectives into executable drone plans.
+- [ ] **D1. FleetState CRDT:** Implement the Conflict-free Replicated Data Type structs in Go for maintaining the Common Operating Picture. Each drone maintains its own COP.
+- [ ] **D2. Gossip Loop:** Build a 1Hz loop in the Go Edge Agent to broadcast and merge CRDTs with neighboring drones via `sentinel.fleet.state.{drone_id}`.
+- [ ] **D3. Cross-Drone Correlation:** Implement logic that lets a drone independently conclude an area is jammed when it observes simultaneous link loss across its neighbors' CRDT states.
 
-#### Site Configuration
+### PLAN — CBBA Task Allocation
 
-- [ ] Create `site_config.py`
-  - Named geographic zones → coordinate polygons
-  - e.g. `"northern_perimeter"` → `[(lat, lon), ...]`
-  - Hardcode 3-4 zones on SITL map for demo
-  - Extensible config file format
-
-#### Mission Planner
-
-- [ ] Create `mission_planner.py`
-- [ ] Implement planning algorithms:
-  - `plan_perimeter_patrol(perimeter, n_drones)` — geometric partitioning
-  - `plan_area_search(bounds, n_drones)` — boustrophedon decomposition + lawnmower patterns
-  - `plan_point_inspection(waypoints, n_drones)` — task allocation (Hungarian or greedy)
-- [ ] NLP parses mission directives → structured mission objectives
-- [ ] Planner converts objectives → waypoint sequences
-- [ ] Output: MAVLink-compatible waypoint lists per drone
-
-#### Multi-Drone Infrastructure
-
-- [ ] Multi-SITL setup (multiple ArduPilot instances)
-- [ ] Connection manager for multiple simultaneous MAVLink links
-- [ ] Per-drone telemetry stores (drone_id partitioning in SQLite)
-- [ ] Fleet status query handler
-- [ ] Dashboard updates for multi-drone view
+- [ ] **D4. CBBA Engine:** Implement the Consensus-Based Bundle Algorithm logic in Go.
+- [ ] **D5. Bidding Logic:** Define risk-aware and energy-aware scoring functions based on the current `FleetState` (distance, battery, capability).
+- [ ] **D6. Bid Gossip & Conflict Resolution:** Implement bid gossiping via `sentinel.threats.bid` and local conflict resolution. Target convergence: 3-5 rounds (~500ms).
+- [ ] **D7. Simulation Test:** Write unit tests simulating 5 Go agents receiving a task, gossiping bids, and successfully resolving the conflict without a central server.
 
 ---
 
-## Pre-Deployment Checklist
+## Phase E: TAPP Execution & Command Routing
 
-- [ ] Replace `str | None` with `Optional[str]` throughout for Python 3.9+ compatibility
-- [ ] Rotate API keys and PAT in `.env` before any public push
-- [ ] Add `.env` to `.gitignore` (verify current state)
-- [ ] Write integration tests for the full pipeline
-- [ ] Performance test SQLite queries with large .tlog files
-- [ ] Document API endpoints in OpenAPI (FastAPI auto-generates this)
+> **Maps to:** Stage 6 (ACT) — Autonomous Execution Tiers + TAPP Protocol (§2).
 
----
+**Goal:** Wire the threat detection, task allocation, and flight controller command execution into an autonomous closed loop implementing all 4 TAPP phases.
 
-## Verification Strategy
+### TAPP State Machine (All 4 Phases)
 
-| Phase | Verification |
-|-------|-------------|
-| Phase 1 | Load .tlog into SQLite → raw SQL queries return correct data |
-| Phase 1 | New detectors fire on synthetic RADIO_STATUS and GPS_RAW_INT data |
-| Phase 2 | Canned queries against stored telemetry → manually validate results |
-| Phase 2 | Each reasoning rule unit tested with synthetic contexts |
-| Phase 3 | End-to-end: natural language → correct structured answer with evidence |
-| Phase 3 | Follow-up questions resolve references correctly via MissionSession |
-| Phase 5 | Generated waypoints visualised on map, validated against mission intent |
+- [ ] **E1. Phase 1 — Detect & Broadcast:** Python sidecar publishes `ThreatAlert` to `sentinel.threats.alert`. Go Edge Agent uses epidemic broadcast (gossip fan-out with TTL) to propagate across the mesh.
+- [ ] **E2. Phase 2 — Corroborate:** Receiving drones independently verify the threat via their own sensors. Publish `ThreatConfirm` or deny to `sentinel.threats.confirm`. Confidence score = f(corroborating_drones, sensor_diversity).
+- [ ] **E3. Phase 3 — Assess & Respond (CBBA):** Drones independently assess and bid. CBBA auction on `sentinel.threats.bid`. Winning drone claims the intercept/observe task.
+- [ ] **E4. Phase 4 — Execute & Report:** Assigned drone executes. Logs action to local SQLite WAL. Publishes `ThreatReport` to `sentinel.threats.report` to update the fleet CRDT state.
 
----
+### Command Routing
 
-## File Map (Current → Future)
+- [ ] **E5. Command Sender:** Create `command_sender.go` to securely send MAVLink commands (e.g., `SET_MODE`, `MISSION_ITEM_INT`) to the FC over serial/UDP once CBBA assigns an intercept/patrol task.
 
-```
-src/
-├── connect.py              ← Keep as-is
-├── telemetry.py            ← Modify: add SQLite ETL output path
-├── anomaly.py              ← Modify: add SignalDegraded, GPSGlitch, MotorImbalance
-├── telemetry_store.py      [NEW — Week 1] SQLite schema + ETL functions
-├── query_engine.py         [NEW — Week 3] Structured query execution
-├── reasoning.py            [NEW — Week 3] Rule-based correlation engine
-├── nlp.py                  [NEW — Week 4] Thin LLM wrapper (parse + format)
-├── sentinel_agent.py       [NEW — Week 4] Orchestrator + MissionSession
-├── mission_planner.py      [NEW — Week 5] Algorithmic mission planning
-├── site_config.py          [NEW — Week 5] Geographic zone definitions
-├── report.py               ← Rewrite: use query engine instead of raw LLM
-├── monitor.py              ← Modify: collect RADIO_STATUS, GPS_RAW_INT
-├── live_feed.py            ← Modify: collect new message types, feed ETL
-├── live_state.py           ← Keep as-is
-├── api.py                  ← Extend: add /ask endpoint
-```
+### Autonomous Execution Tiers
+
+- [ ] **E6. Tier 1 (Edge — Fully Autonomous):** ArduPilot failsafes, collision avoidance, immediate EW evasion. No human required.
+- [ ] **E7. Tier 2 (Swarm — Collaborative):** CBBA-assigned intercepts, dynamic formation changes, re-routing.
+- [ ] **E8. Tier 3 (Operator — Human-in-the-Loop):** Implement the failsafe gateway where kinetic engagement tasks require explicit cryptographic confirmation from a GCS node (if available).
+
+### Mesh Topology
+
+- [ ] **E9. Mesh Topology Service:** Implement `sentinel.mesh.topology` publisher/subscriber in Go to maintain mesh routing state and detect network partitions.
+
+### End-to-End Test
+
+- [ ] **E10. Full Pipeline Test:**
+  1. Python sidecar detects GPS spoofing (Domain 3).
+  2. Publishes `ThreatAlert` to NATS.
+  3. Go Edge Agent triggers TAPP Phase 1 (epidemic broadcast).
+  4. Neighbor drones corroborate (Phase 2).
+  5. Mesh conducts CBBA auction (Phase 3).
+  6. Winning Edge Agent sends MAVLink maneuver command to FC (Phase 4).
+  7. `ThreatReport` published to update fleet COP.
 
 ---
 
-## Dependencies
+## Phase F: Sentinel C2 — GCS Passive Observer (Python)
 
-### Python (in venv-sentinel)
+> **Maps to:** Sentinel C2 service (§3) + Stage 4 REASON (GCS Role).
 
-| Package | Purpose |
-|---------|---------|
-| pymavlink | MAVLink protocol |
-| pandas | Telemetry DataFrames |
-| ollama | Local LLM (llama3.2) |
-| fastapi | REST API |
-| uvicorn | ASGI server |
-| python-multipart | File upload handling |
-| python-dotenv | Environment variables |
+**Goal:** Build the optional ground control station service that passively observes the swarm without commanding it.
 
-### System
-
-| Component | Purpose |
-|-----------|---------|
-| ArduPilot SITL | Drone simulator |
-| MAVProxy | MAVLink proxy + GCS |
-| Ollama | Local LLM runtime |
-| Node.js 20+ | Dashboard (Next.js) |
-| SQLite3 | Telemetry store (stdlib, no install) |
+- [ ] **F1. CRDT Consumer:** Subscribe to `sentinel.fleet.state.>` on the NATS mesh and build a ground-side Common Operating Picture.
+- [ ] **F2. NLP Agent Interface:** Migrate the existing `agent.py` / `reasoning.py` / `query_engine.py` to consume the live CRDT state and NATS threat feeds instead of querying SQLite.
+- [ ] **F3. Historical Logging:** Persist all received CRDT snapshots, `ThreatAlert`s, and `ThreatReport`s into a time-series database for post-mission analysis.
+- [ ] **F4. Dashboard Integration:** Expose a REST/WebSocket API that the Next.js dashboard can consume for real-time fleet visualization.
 
 ---
 
-## References
+## Phase G: Sentinel Fusion — External Sensor Bridge (Python)
 
-- Architecture decisions: see `ARCHITECTURE.md`
-- MAVLink protocol reference: see `MAVLINK.md`
-- Setup and troubleshooting: see `README.md`
+> **Maps to:** Sentinel Fusion service (§3).
+
+**Goal:** Bridge external ground-based sensor feeds into the NATS mesh so the swarm can incorporate off-platform intelligence.
+
+- [ ] **G1. REST API Ingestion:** Build a FastAPI service that accepts ground radar and RF scanner feeds via REST endpoints.
+- [ ] **G2. NATS Bridge:** Convert incoming external sensor data into `ThreatAlert` protobufs and publish to `sentinel.threats.alert` so the swarm's TAPP protocol treats them identically to on-platform detections.
+- [ ] **G3. Authentication:** Implement API key or mTLS authentication to prevent adversarial injection of false threat data.
+
+---
+
+## Appendix: Degradation Model Compliance
+
+All phases above must be validated against the 4 degradation levels:
+
+| Level | Connectivity | What Must Still Work |
+|---|---|---|
+| **NORMAL** | Full mesh + GCS | All 7 phases active. Full fleet coordination, NLP queries, external ground feeds. |
+| **DEGRADED** | Mesh only (No GCS) | Phases A–E active. TAPP protocol, CBBA, edge anomaly detection, CRDT sync. Phases F–G offline. |
+| **AUTONOMOUS** | Zero connectivity | Phase C active (single-drone 5-domain detection). Pre-planned route execution. Obstacle avoidance. |
+| **SURVIVAL** | Flight controller only | ArduPilot hardware failsafes (RTB/Land). All software layers offline. |

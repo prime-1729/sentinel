@@ -33,6 +33,7 @@ export interface FlightPathPoint {
 
 export interface AnalyzeResponse {
   status: string
+  mission_id: string
   mission_stats: {
     duration: string
     duration_seconds: number
@@ -52,4 +53,9 @@ export interface LiveTelemetryResponse {
   telemetry: LiveTelemetry
   anomalies: Anomaly[]
   mission_elapsed_seconds: number
+}
+
+export interface AskResponse {
+  question: string
+  answer: string
 }

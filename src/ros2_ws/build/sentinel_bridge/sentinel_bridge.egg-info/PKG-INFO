@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: sentinel-bridge
+Version: 0.0.1
+Summary: ROS2 to NATS bridge for SENTINEL
+Maintainer: Karan
+Maintainer-email: dev@sentinel.local
+License: MIT
