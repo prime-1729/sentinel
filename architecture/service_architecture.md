@@ -339,13 +339,12 @@ sentinel/
 ├── techstack/                             #   Technology research notes
 │   ├── databases.md
 │   ├── mesh_and_p2p_networks.md
-│   └── sensor_data_collection.md
+│   ├── sensor_data_collection.md
+│   ├── MAVLINK.md                         #   MAVLink protocol reference
+│   └── SITL.md                            #   ArduPilot SITL setup guide
 │
 ├── .tools/                                #   Local dev toolchain (Go, protoc, NATS) — .gitignored
-├── PLAN.md                                #   Execution roadmap (7 phases, maps to this doc)
-├── README.md
-├── MAVLINK.md                             #   MAVLink protocol reference
-└── SITL.md                                #   ArduPilot SITL setup guide
+└── PLAN.md                                #   Execution roadmap (7 phases, maps to this doc)
 ```
 
 ### Service ↔ Pipeline Stage Mapping
