@@ -351,3 +351,5 @@ Core pipeline:
 4. Generate intelligence reports via Claude API
 5. Expose everything via FastAPI
 6. Scale to multi-drone coordination
+
+
