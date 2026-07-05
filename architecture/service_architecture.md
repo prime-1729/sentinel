@@ -215,18 +215,32 @@ sentinel/
 │   │       └── command/                   #   [PLANNED] MAVLink command sender to FC
 │   │           └── command_sender.go
 │   │
-│   ├── intelligence/                      # ── Python Sidecar (5-Domain Intelligence) ──
+│   ├── intelligence/                      # ── Python Sidecar (5-Domain Intelligence + CV) ──
 │   │   ├── __init__.py
-│   │   ├── sidecar.py                     #   [PLANNED] Main daemon. Subscribes to NATS telemetry topics.
-│   │   ├── domains/
-│   │   │   ├── __init__.py
-│   │   │   ├── propulsion.py              #   [PLANNED] FFT vibration analysis + MCSA
-│   │   │   ├── power.py                   #   [PLANNED] Peukert's law + impedance estimation
-│   │   │   ├── navigation.py              #   [PLANNED] GPS spoofing / EKF innovation gating
-│   │   │   ├── flight_dynamics.py         #   [PLANNED] Commanded vs achieved mapping
-│   │   │   └── electronic_warfare.py      #   [PLANNED] RF baselining + ML anomaly detection
-│   │   └── ml_models/                     #   Trained model artifacts (.pkl, .onnx)
-│   │       └── isolation_forest.pkl
+│   │   ├── sidecar.py                     #   Main NATS daemon orchestrating pipelines
+│   │   ├── pb/                            #   Protobuf bindings
+│   │   ├── domains/                       #   Anomaly detection physics detectors
+│   │   │   ├── propulsion.py              #   FFT vibration analysis + MCSA
+│   │   │   ├── power.py                   #   Peukert's law + impedance estimation
+│   │   │   ├── navigation.py              #   GPS spoofing / EKF innovation gating
+│   │   │   ├── flight_dynamics.py         #   Commanded vs achieved mapping
+│   │   │   └── electronic_warfare.py      #   RF baselining + ML anomaly detection
+│   │   ├── ml_models/                     #   Machine learning models
+│   │   │   ├── isolation_forest.py        #   Layer 1 IF model
+│   │   │   ├── lstm_autoencoder.py        #   Layer 2 LSTM model
+│   │   │   └── domain_classifier.py       #   Layer 3 Random Forest
+│   │   ├── perception/                    #   Computer vision
+│   │   │   └── detector.py                #   YOLO ONNX detection
+│   │   ├── tracking/                      #   Multi-object tracking
+│   │   │   ├── tracker.py                 #   Hungarian + Kalman tracker
+│   │   │   └── visual_servo.py            #   PID visual servoing
+│   │   ├── threat/                        #   Threat assessment
+│   │   │   ├── behavior_analyzer.py       #   Trajectory behavior classification
+│   │   │   └── threat_scorer.py           #   Multi-factor threat scoring
+│   │   ├── autonomy/                      #   Reaction engine
+│   │   │   └── reaction_rules.py          #   Deterministic safety rules
+│   │   └── evaluation/                    #   Metrics and scoring
+│   │       └── metrics.py                 #   Evaluation functions
 │   │
 │   │
 │   │   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -339,13 +353,12 @@ sentinel/
 ├── techstack/                             #   Technology research notes
 │   ├── databases.md
 │   ├── mesh_and_p2p_networks.md
-│   └── sensor_data_collection.md
+│   ├── sensor_data_collection.md
+│   ├── MAVLINK.md                         #   MAVLink protocol reference
+│   └── SITL.md                            #   ArduPilot SITL setup guide
 │
 ├── .tools/                                #   Local dev toolchain (Go, protoc, NATS) — .gitignored
-├── PLAN.md                                #   Execution roadmap (7 phases, maps to this doc)
-├── README.md
-├── MAVLINK.md                             #   MAVLink protocol reference
-└── SITL.md                                #   ArduPilot SITL setup guide
+└── PLAN.md                                #   Execution roadmap (7 phases, maps to this doc)
 ```
 
 ### Service ↔ Pipeline Stage Mapping

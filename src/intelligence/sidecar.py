@@ -9,6 +9,7 @@ import time
 import logging
 import asyncio
 import json
+import base64
 import pandas as pd
 import collections
 from typing import Dict, Any
@@ -75,6 +76,9 @@ class IntelligenceSidecar:
         self.max_history_seconds = 60
         self.latest_telemetry_dict = {}
         self.latest_telemetry_lock = threading.Lock()
+        
+        self.latest_frame = None
+        self.latest_frame_lock = threading.Lock()
 
     def start(self):
         """Start the sidecar daemon."""
@@ -118,9 +122,8 @@ class IntelligenceSidecar:
             # Subscribe to all telemetry from bridge
             await self.nc.subscribe(f"sentinel.telemetry.{self.drone_id}.>", cb=self._on_telemetry)
             
-            # Note: For CV, in a real setup we might subscribe to a compressed video stream
-            # or have the bridge publish frames directly if on the same machine.
-            # Here we mock the trigger.
+            # Subscribe to camera topic
+            await self.nc.subscribe(f"sentinel.telemetry.{self.drone_id}.camera", cb=self._on_camera_frame)
             
             # Start background tasks
             anomaly_task = asyncio.create_task(self._anomaly_loop())
@@ -192,6 +195,22 @@ class IntelligenceSidecar:
                 new_comms = {**new_row, "rssi": data.get("rssi", 0), "remrssi": data.get("remrssi", 0),
                              "noise": data.get("noise", 0), "rxerrors": data.get("rxerrors", 0)}
                 self.telemetry_history["comms"].append(new_comms)
+                
+    async def _on_camera_frame(self, msg):
+        """Buffer incoming camera frames."""
+        try:
+            data = json.loads(msg.data.decode())
+            if "frame" in data and CV2_AVAILABLE:
+                import cv2
+                import numpy as np
+                img_data = base64.b64decode(data["frame"])
+                np_arr = np.frombuffer(img_data, np.uint8)
+                frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+                if frame is not None:
+                    with self.latest_frame_lock:
+                        self.latest_frame = frame
+        except Exception as e:
+            logger.error(f"Error decoding camera frame: {e}")
                     
     async def _heartbeat_loop(self):
         """Publish health heartbeat to NATS."""
@@ -281,7 +300,7 @@ class IntelligenceSidecar:
                     await self.nc.publish(f"sentinel.command.{self.drone_id}", json.dumps(cmd).encode())
 
     async def _perception_loop(self):
-        """Mock perception loop for extracting objects from video stream."""
+        """Run perception loop extracting objects from video stream."""
         import numpy as np
         frame_id = 0
         while not self.stop_event.is_set():
@@ -289,8 +308,12 @@ class IntelligenceSidecar:
             if not CV2_AVAILABLE:
                 continue
                 
-            # Generate mock frame
-            frame = np.zeros((480, 640, 3), dtype=np.uint8)
+            # Get latest frame
+            with self.latest_frame_lock:
+                frame = self.latest_frame
+                
+            if frame is None:
+                continue
             
             # Detect
             detections = self.perception_pipeline.detect(frame, frame_id)

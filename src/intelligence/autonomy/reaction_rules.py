@@ -29,6 +29,8 @@ class ReactionEngine:
         "airspace_violation": {"action": "descend_and_loiter", "tier": 1},
         "hostile_uas_approaching": {"action": "evasive_maneuver", "tier": 2},
         "target_acquired": {"action": "begin_tracking", "tier": 3},
+        "wind_shear_detected": {"action": "maintain_altitude", "tier": 2},
+        "control_instability": {"action": "switch_to_stabilize", "tier": 1},
     }
 
     def __init__(self, debounce_frames: int = 3, cooldown_frames: int = 10):
@@ -68,7 +70,12 @@ class ReactionEngine:
                 elif domain == "environmental":
                     triggered_rules.append(("geofence_breach", anomaly.detail))
                 elif domain == "dynamics":
-                    triggered_rules.append(("motor_failure", anomaly.detail))
+                    if "WindShear" in anomaly.event_type:
+                        triggered_rules.append(("wind_shear_detected", anomaly.detail))
+                    elif "ControlInstability" in anomaly.event_type:
+                        triggered_rules.append(("control_instability", anomaly.detail))
+                    else:
+                        triggered_rules.append(("motor_failure", anomaly.detail))
                     
         # 2. Check Threats (External State)
         for threat in threats:

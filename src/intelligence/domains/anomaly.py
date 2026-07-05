@@ -191,8 +191,7 @@ class AnomalyPipeline:
                         if conf > 0.6:
                             detail += f" | Fault identified as: {domain.upper()} (conf: {conf:.2f})"
                             # Let the autonomous reaction engine handle specific actions based on the domain.
-                            # We just provide a general recommendation string.
-                            recommendation = f"Domain fault detected ({domain}). Check autonomous reaction logs for mitigation actions."
+                            # We keep the specific recommendation from the detector.
                 
                 anomalies.append(AnomalyEvent(
                     event_type=f"{domain.capitalize()}Anomaly" if domain != "unknown" else event['event_type'],
@@ -214,48 +213,3 @@ def run_all_detectors(telemetry: dict) -> List[AnomalyEvent]:
         _pipeline = AnomalyPipeline()
         
     return _pipeline.run(telemetry)
-
-def store_anomalies(anomalies: List[AnomalyEvent], drone_id: str, mission_id: str, db_path: str = "data/sentinel.db") -> int:
-    if not anomalies:
-        return 0
-        
-    try:
-        try:
-            # TODO: Wire to proper telemetry store when available
-            # from telemetry_store import TelemetryStore
-            raise ImportError("Legacy TelemetryStore is unavailable")
-        except ImportError:
-            logger.warning("Legacy TelemetryStore is unavailable")
-            return 0
-        # store = TelemetryStore(db_path=db_path)
-        
-        anomaly_dicts = [
-            {
-                'timestamp': a.timestamp,
-                'event_type': a.event_type,
-                'severity': a.severity,
-                'detail': a.detail,
-                'recommendation': a.recommendation
-            }
-            for a in anomalies
-        ]
-        
-        count = store.ingest_anomalies(anomaly_dicts, drone_id=drone_id, mission_id=mission_id)
-        store.close()
-        return count
-    except Exception as e:
-        logger.error(f"Error storing anomalies: {e}")
-        return 0
-
-def print_anomaly_report(anomalies: List[AnomalyEvent]):
-    if len(anomalies) == 0:
-        print("\nSENTINEL: No anomalies detected. Mission nominal.")
-        return
-    
-    print(f"\nSENTINEL: {len(anomalies)} anomaly/anomalies detected:")
-    print("-" * 50)
-    
-    for a in anomalies:
-        print(f"\n[{a.severity}] {a.event_type} (Domain: {a.domain})")
-        print(f"  Detail: {a.detail}")
-        print(f"  Action: {a.recommendation}")

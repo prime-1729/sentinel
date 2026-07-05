@@ -227,8 +227,7 @@ run(telemetry) flow:
 4. Builds AnomalyEvent objects and returns them
 ```
 
-> [!CAUTION]
-> **Layer 2 is completely non-functional.** Lines 106-114: whether or not the LSTM model exists, `confirmed` is always set to `True`. The LSTM never actually runs inference. It's dead code. See review section.
+> **Layer 2 Integration:** Layer 2 (LSTM) now actively runs inference on the 30-step sequence leading up to an anomaly flagged by Layer 1, providing a robust temporal confirmation step.
 
 ---
 
@@ -305,7 +304,7 @@ Frame N arrives with new YOLO detections
    Detection box:          (107, 200, 157, 250)
    Overlap area / Total area = 0.75 → Good match! (threshold = 0.3)
    
-   Uses greedy matching (picks highest IoU first, assigns it, repeats)
+   Uses the Hungarian Algorithm (`scipy.optimize.linear_sum_assignment`) for globally optimal matching.
   ↓
 3. UPDATE matched tracks: Update box, velocity (smoothed), hit count
    Velocity smoothing: new_vel = 0.4 * old_vel + 0.6 * measured_vel
@@ -485,37 +484,22 @@ The `ReactionEngine` is category 1. The rules are:
 
 `sidecar.py` ties everything together. It:
 1. Connects to NATS mesh
-2. Subscribes to `sentinel.telemetry.{drone_id}.>` 
-3. Buffers telemetry into DataFrames (60-second sliding window)
-4. Every 5 seconds, runs the anomaly pipeline on the buffer
-5. If anomalies found, runs the reaction engine
-6. Publishes alerts and commands back to NATS
-
-The perception pipeline (YOLO → Tracker → Behavior → Threat) is initialized but **not wired into a loop** — there's a comment saying "a real implementation would have a `_perception_loop`."
+2. Subscribes to `sentinel.telemetry.{drone_id}.>` and `sentinel.telemetry.{drone_id}.camera`
+3. Buffers telemetry into DataFrames and buffers camera JPEG frames
+4. Every 2 seconds, runs the anomaly pipeline on the telemetry buffer
+5. At ~10 FPS, runs the YOLO CV perception pipeline on the camera frame
+6. If anomalies or threats are found, runs the reaction engine
+7. Publishes alerts and commands back to NATS
 
 ---
 
 ## 9. Code Quality Review
 
-### 🔴 CRITICAL Issues
+### ✅ CRITICAL Issues (Resolved)
 
-**1. LSTM Layer 2 is completely dead code** (`anomaly.py` lines 106-114)
-```python
-if self.lstm_model:
-    confirmed = True   # ← Never actually runs LSTM inference!
-else:
-    confirmed = True   # ← Same result either way!
-```
-The LSTM Autoencoder is never called. `confirmed` is always `True`. Layer 2 does literally nothing.
+**1. LSTM Layer 2 Dead Code Fixed:** The LSTM Autoencoder is now fully integrated and executes inference correctly in `anomaly.py`.
 
-**2. Bounding box math is wrong** (`detector.py` lines 150-153)
-```python
-boxes[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2 - dw) / scale  # x1 — modifies boxes[:,0]
-boxes[:, 1] = (boxes[:, 1] - boxes[:, 3] / 2 - dh) / scale  # y1 — modifies boxes[:,1]
-boxes[:, 2] = (boxes[:, 0] + boxes[:, 2] / scale)           # x2 — USES ALREADY-MODIFIED boxes[:,0]!
-boxes[:, 3] = (boxes[:, 1] + boxes[:, 3] / scale)           # y2 — USES ALREADY-MODIFIED boxes[:,1]!
-```
-Lines 152-153 use `boxes[:, 0]` and `boxes[:, 1]` AFTER they were modified in lines 150-151. The x2/y2 calculations are using the already-converted x1/y1, producing wrong coordinates.
+**2. Bounding Box Math Fixed:** The YOLO bounding box coordinate conversion math in `detector.py` has been patched to correctly compute `x2, y2`.
 
 **3. Missing import in behavior_analyzer.py** (line 16)
 ```python
@@ -540,8 +524,7 @@ Anomaly detection won't run until ALL 6 telemetry streams (positions, battery, a
 **6. Domain classification recommendations are hardcoded strings** (`anomaly.py` lines 133-142)
 Same problem as reaction_rules but worse — these are in the ML pipeline. Domain-specific recommendations should be configurable or come from the reaction engine, not duplicated here.
 
-**7. Greedy matching in tracker** (`tracker.py` line 104)
-The comment says "could use Hungarian algorithm" — yes, it should. Greedy matching is O(n²) per iteration and produces suboptimal assignments. With 10+ objects, this will misassign tracks.
+**7. Hungarian Matching in tracker:** The tracker was upgraded from greedy matching to the Hungarian algorithm, resolving the O(n²) suboptimal assignment issue.
 
 **8. Hardcoded frame center assumption** (`behavior_analyzer.py` line 97)
 ```python
@@ -549,8 +532,7 @@ center = np.array([320, 240])  # Assuming 640x480 frame
 ```
 Frame size is hardcoded. If the camera is 1920×1080, all "approaching" calculations are wrong.
 
-**9. No perception loop exists** (`sidecar.py`)
-The entire CV pipeline (detector → tracker → behavior → threat) is initialized but never actually runs. There's no `_perception_loop` to process camera frames.
+**9. Perception Loop Wired:** `sidecar.py` now includes a `_perception_loop` that decodes JPEG frames from NATS and runs YOLO inference and tracking.
 
 ### 🟡 Minor Issues
 
